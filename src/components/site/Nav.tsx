@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import logo from "@/assets/bisaat-logo.png.asset.json";
 
 const links = [
   { label: "Work", href: "#work" },
@@ -28,11 +27,11 @@ export function Nav() {
       <nav className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-12">
         <a href="#top" className="flex items-center gap-3" aria-label="Bisaat Labs home">
           <img
-            src={logo.url}
+            src="/bisaat-logo-transparent.png"
             alt="Bisaat Labs"
             width={140}
             height={140}
-            className="h-11 w-auto mix-blend-multiply"
+            className="h-12 w-24 object-contain md:h-14 md:w-28"
           />
         </a>
         <div className="flex items-center gap-8">

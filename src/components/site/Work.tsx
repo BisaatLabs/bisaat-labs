@@ -72,7 +72,7 @@ function Project({
 export function Work() {
   return (
     <section id="work" className="relative bg-cream px-6 py-28 md:px-12 md:py-40">
-      <div className="mx-auto max-w-[1600px]">
+      <div className="mx-auto max-w-[1280px]">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-8 md:mb-24">
           <div>
             <SectionLabel className="mb-6">Selected Work</SectionLabel>
@@ -86,36 +86,66 @@ export function Work() {
         </div>
 
         {/* Editorial, deliberately uneven grid */}
-        <div className="grid grid-cols-12 gap-x-6 gap-y-20 md:gap-y-32">
-          <div className="col-span-12 md:col-span-7">
+        <div className="grid grid-cols-12 gap-x-6 gap-y-16 md:gap-x-8 md:gap-y-24">
+          <div className="col-span-12 md:col-span-5 md:col-start-2">
             <Reveal>
-              <Project src={arooma} name="Arooma" kind="Fragrance / Campaign" ratio="aspect-[4/5]" index="01" />
+              <Project
+                src={arooma}
+                name="Arooma"
+                kind="Fragrance / Campaign"
+                ratio="aspect-[4/5]"
+                index="01"
+              />
             </Reveal>
           </div>
-          <div className="col-span-12 self-end md:col-span-4 md:col-start-9">
+          <div className="col-span-12 self-end md:col-span-4 md:col-start-8">
             <Reveal delay={120}>
-              <Project src={zen} name="Zensphere" kind="Jewellery / Macro" ratio="aspect-[7/5]" index="02" />
+              <Project
+                src={zen}
+                name="Zensphere"
+                kind="Jewellery / Macro"
+                ratio="aspect-[7/5]"
+                index="02"
+              />
             </Reveal>
           </div>
 
-          <div className="col-span-12 md:col-span-8 md:col-start-3">
+          <div className="col-span-12 md:col-span-7 md:col-start-4">
             <Reveal>
-              <Project src={mure} name="Mure" kind="Candles / Interiors" ratio="aspect-[16/9]" index="03" />
+              <Project
+                src={mure}
+                name="Mure"
+                kind="Candles / Interiors"
+                ratio="aspect-[16/9]"
+                index="03"
+              />
             </Reveal>
           </div>
 
-          <div className="col-span-12 md:col-span-5">
+          <div className="col-span-12 md:col-span-4 md:col-start-2">
             <Reveal>
-              <Project src={gullak} name="Gullakwala" kind="Umrah Gifting" ratio="aspect-[4/5]" index="04" />
+              <Project
+                src={gullak}
+                name="Gullakwala"
+                kind="Umrah Gifting"
+                ratio="aspect-[4/5]"
+                index="04"
+              />
             </Reveal>
           </div>
-          <div className="col-span-12 md:col-span-5 md:col-start-7 md:pt-28">
+          <div className="col-span-12 md:col-span-4 md:col-start-7 md:pt-20">
             <Reveal delay={120}>
-              <Project src={mavme} name="Mavme" kind="Flowers / Studio" ratio="aspect-[4/5]" index="05" />
+              <Project
+                src={mavme}
+                name="Mavme"
+                kind="Flowers / Studio"
+                ratio="aspect-[4/5]"
+                index="05"
+              />
             </Reveal>
           </div>
 
-          <div className="col-span-12">
+          <div className="col-span-12 md:col-span-10 md:col-start-2">
             <Reveal>
               <Project
                 src={maryas}
