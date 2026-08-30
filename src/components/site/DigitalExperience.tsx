@@ -1,4 +1,4 @@
-import maryas from "@/assets/work-maryas.jpg";
+import maryas from "@/assets/work-maryas.webp";
 import { Reveal, SectionLabel } from "./ui";
 
 export function DigitalExperience() {
@@ -26,15 +26,20 @@ export function DigitalExperience() {
         <div className="device-scene mt-20" data-cursor="VIEW">
           <div className="laptop">
             <div className="screen">
-              <img src={maryas} alt="Maryas Cafe website on laptop" />
+              <img
+                src={maryas}
+                alt="Maryas Cafe website on laptop"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
             <div className="base" />
           </div>
           <div className="tablet">
-            <img src={maryas} alt="Maryas Cafe website on tablet" />
+            <img src={maryas} alt="" aria-hidden loading="lazy" decoding="async" />
           </div>
           <div className="phone">
-            <img src={maryas} alt="Maryas Cafe website on phone" />
+            <img src={maryas} alt="" aria-hidden loading="lazy" decoding="async" />
           </div>
         </div>
       </div>

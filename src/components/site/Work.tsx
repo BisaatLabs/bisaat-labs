@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import gullak from "@/assets/work-gullakwala.jpg";
-import mure from "@/assets/work-mure.jpg";
-import mavme from "@/assets/work-mavme.jpg";
-import zen from "@/assets/work-zensphere.jpg";
-import arooma from "@/assets/work-arooma.jpg";
-import maryas from "@/assets/work-maryas.jpg";
+import gullak from "@/assets/work-gullakwala.webp";
+import mure from "@/assets/work-mure.webp";
+import mavme from "@/assets/work-mavme.webp";
+import zen from "@/assets/work-zensphere.webp";
+import arooma from "@/assets/work-arooma.webp";
+import maryas from "@/assets/work-maryas.webp";
 import { Reveal, SectionLabel } from "./ui";
 
 function Tilt({ children }: { children: React.ReactNode }) {

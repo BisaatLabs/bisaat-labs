@@ -1,4 +1,4 @@
-import mic from "@/assets/mic.png";
+import mic from "@/assets/mic.webp";
 import { Reveal, SectionLabel } from "./ui";
 
 export function Podcast() {
@@ -25,7 +25,7 @@ export function Podcast() {
         </div>
         <div className="mic-stage" data-cursor="dot">
           <div className="mic-halo" />
-          <img src={mic} alt="Studio podcast microphone" />
+          <img src={mic} alt="Studio podcast microphone" loading="lazy" decoding="async" />
         </div>
       </div>
     </section>

@@ -20,13 +20,14 @@ export function Cursor() {
       x = e.clientX;
       y = e.clientY;
       const t = (e.target as HTMLElement | null)?.closest?.("[data-cursor]") as HTMLElement | null;
-      setLabel(t ? t.dataset.cursor || null : null);
+      setLabel(t ? t.dataset["cursor"] || null : null);
     };
 
     const loop = () => {
       cx += (x - cx) * 0.18;
       cy += (y - cy) * 0.18;
-      if (dot.current) dot.current.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`;
+      if (dot.current)
+        dot.current.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`;
       raf = requestAnimationFrame(loop);
     };
 

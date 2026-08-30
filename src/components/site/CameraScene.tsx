@@ -1,19 +1,59 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import camera from "@/assets/camera.png";
-import gullak from "@/assets/work-gullakwala.jpg";
-import mure from "@/assets/work-mure.jpg";
-import mavme from "@/assets/work-mavme.jpg";
-import zen from "@/assets/work-zensphere.jpg";
-import arooma from "@/assets/work-arooma.jpg";
+import camera from "@/assets/camera.webp";
+import gullak from "@/assets/work-gullakwala.webp";
+import mure from "@/assets/work-mure.webp";
+import mavme from "@/assets/work-mavme.webp";
+import zen from "@/assets/work-zensphere.webp";
+import arooma from "@/assets/work-arooma.webp";
 
 const orbit = [
-  { src: gullak, label: "Gullakwala", x: -34, y: -26, r: -7, s: 0.78, cls: "w-[30vw] md:w-[19vw] aspect-[4/5]" },
-  { src: mure, label: "Mure", x: 34, y: -22, r: 6, s: 0.82, cls: "w-[34vw] md:w-[22vw] aspect-[3/2]" },
-  { src: mavme, label: "Mavme", x: -30, y: 25, r: 5, s: 0.72, cls: "w-[28vw] md:w-[17vw] aspect-[4/5]" },
-  { src: zen, label: "Zensphere", x: 32, y: 27, r: -5, s: 0.76, cls: "w-[32vw] md:w-[20vw] aspect-[7/5]" },
-  { src: arooma, label: "Arooma", x: 0, y: 2, r: 0, s: 1.15, cls: "w-[52vw] md:w-[30vw] aspect-[4/5]" },
+  {
+    src: gullak,
+    label: "Gullakwala",
+    x: -34,
+    y: -26,
+    r: -7,
+    s: 0.78,
+    cls: "w-[30vw] md:w-[19vw] aspect-[4/5]",
+  },
+  {
+    src: mure,
+    label: "Mure",
+    x: 34,
+    y: -22,
+    r: 6,
+    s: 0.82,
+    cls: "w-[34vw] md:w-[22vw] aspect-[3/2]",
+  },
+  {
+    src: mavme,
+    label: "Mavme",
+    x: -30,
+    y: 25,
+    r: 5,
+    s: 0.72,
+    cls: "w-[28vw] md:w-[17vw] aspect-[4/5]",
+  },
+  {
+    src: zen,
+    label: "Zensphere",
+    x: 32,
+    y: 27,
+    r: -5,
+    s: 0.76,
+    cls: "w-[32vw] md:w-[20vw] aspect-[7/5]",
+  },
+  {
+    src: arooma,
+    label: "Arooma",
+    x: 0,
+    y: 2,
+    r: 0,
+    s: 1.15,
+    cls: "w-[52vw] md:w-[30vw] aspect-[4/5]",
+  },
 ];
 
 export function CameraScene() {
@@ -46,11 +86,24 @@ export function CameraScene() {
       tl.fromTo(
         ".cam-body",
         { y: "42vh", scale: 0.6, rotateY: -26, rotateX: 10, opacity: 0 },
-        { y: "0vh", scale: 1, rotateY: -6, rotateX: 2, opacity: 1, ease: "power2.out", duration: 1.1 },
+        {
+          y: "0vh",
+          scale: 1,
+          rotateY: -6,
+          rotateX: 2,
+          opacity: 1,
+          ease: "power2.out",
+          duration: 1.1,
+        },
       )
         .fromTo(".cam-line-1", { opacity: 1, y: 0 }, { opacity: 0, y: -60, duration: 0.5 }, 0.55)
         .fromTo(".cam-line-2", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6 }, 0.85)
-        .fromTo(".cam-glint", { xPercent: -140, opacity: 0 }, { xPercent: 140, opacity: 0.85, duration: 0.7 }, 1.35)
+        .fromTo(
+          ".cam-glint",
+          { xPercent: -140, opacity: 0 },
+          { xPercent: 140, opacity: 0.85, duration: 0.7 },
+          1.35,
+        )
         .to(".cam-glint", { opacity: 0, duration: 0.2 }, 2.0);
 
       orbit.forEach((o, i) => {

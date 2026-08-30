@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import r1 from "@/assets/reel-1.jpg";
-import r2 from "@/assets/reel-2.jpg";
-import r3 from "@/assets/reel-3.jpg";
-import r4 from "@/assets/reel-4.jpg";
+import r1 from "@/assets/reel-1.webp";
+import r2 from "@/assets/reel-2.webp";
+import r3 from "@/assets/reel-3.webp";
+import r4 from "@/assets/reel-4.webp";
 import { SectionLabel } from "./ui";
 
 const reels = [

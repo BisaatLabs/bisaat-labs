@@ -164,8 +164,10 @@ export function ProcessAndFooter() {
       <footer className="bg-ink px-6 py-10 text-white md:px-12">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-8 md:flex-row md:items-end">
           <img
-            src="/bisaat-logo-transparent.png"
+            src="/bisaat-logo-transparent.webp"
             alt="Bisaat Labs"
+            loading="lazy"
+            decoding="async"
             className="h-24 w-40 object-contain"
           />
           <div className="footer-contact text-left md:text-right">

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import camera from "@/assets/camera.png";
-import mic from "@/assets/mic.png";
-import reel from "@/assets/reel-2.jpg";
-import work from "@/assets/work-mure.jpg";
+import camera from "@/assets/camera.webp";
+import mic from "@/assets/mic.webp";
+import reel from "@/assets/reel-2.webp";
+import work from "@/assets/work-mure.webp";
 import { Reveal, SectionLabel } from "./ui";
 
 const services = [
@@ -63,6 +63,8 @@ function ServiceVisual({ item }: { item: (typeof services)[number] }) {
     <img
       src={item.src}
       alt=""
+      loading="lazy"
+      decoding="async"
       className={item.kind === "portrait" ? "service-portrait" : "service-object"}
     />
   );
@@ -86,7 +88,7 @@ export function Services() {
               </h2>
             </Reveal>
             <div className="service-stage mt-14" aria-live="polite">
-              <ServiceVisual item={services[active]} />
+              <ServiceVisual item={services[active] ?? services[0]!} />
             </div>
           </div>
           <div className="divide-y divide-ink/10 border-y border-ink/10 self-end">

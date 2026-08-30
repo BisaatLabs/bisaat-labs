@@ -14,12 +14,7 @@ export function useReducedMotion() {
 }
 
 export function Diamond({ className }: { className?: string }) {
-  return (
-    <span
-      aria-hidden
-      className={cn("inline-block size-2 rotate-45 bg-brown", className)}
-    />
-  );
+  return <span aria-hidden className={cn("inline-block size-2 rotate-45 bg-brown", className)} />;
 }
 
 /** Fade / mask reveal driven by IntersectionObserver (cheap, no scroll listeners). */
@@ -56,9 +51,8 @@ export function Reveal({
   }, []);
 
   return (
-    // @ts-expect-error polymorphic tag
     <Tag
-      ref={ref}
+      ref={ref as React.Ref<never>}
       className={className}
       style={{
         opacity: shown ? 1 : 0,
@@ -124,7 +118,9 @@ export function Magnetic({
         "transition-[background-color,transform] duration-500 ease-out hover:bg-brown",
         className,
       )}
-      style={{ transition: "transform 600ms cubic-bezier(.16,1,.3,1), background-color 400ms ease" }}
+      style={{
+        transition: "transform 600ms cubic-bezier(.16,1,.3,1), background-color 400ms ease",
+      }}
     >
       {children}
     </a>

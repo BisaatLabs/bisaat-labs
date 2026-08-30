@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import instantCamera from "@/assets/hero-instant-camera.png";
-import filmReel from "@/assets/hero-film-reel.png";
-import studioMic from "@/assets/hero-studio-mic.png";
+import instantCamera from "@/assets/hero-instant-camera.webp";
+import filmReel from "@/assets/hero-film-reel.webp";
+import studioMic from "@/assets/hero-studio-mic.webp";
 import { Diamond, Magnetic } from "./ui";
 
 export function Hero() {
@@ -62,12 +62,20 @@ export function Hero() {
             className="hero-object hero-object-camera"
             src={instantCamera}
             alt="Professional instant camera"
+            fetchPriority="high"
+            decoding="async"
           />
-          <img className="hero-object hero-object-reel" src={filmReel} alt="Vintage film reel" />
+          <img
+            className="hero-object hero-object-reel"
+            src={filmReel}
+            alt="Vintage film reel"
+            decoding="async"
+          />
           <img
             className="hero-object hero-object-mic"
             src={studioMic}
             alt="Professional studio microphone"
+            decoding="async"
           />
         </div>
       </div>
