@@ -1,6 +1,5 @@
--- Bisaat Labs — Influencers table
--- Run this in your Supabase project's SQL editor (Database > SQL Editor).
--- Docs: https://supabase.com/docs/guides/database/overview
+-- Bisaat Labs influencer roster
+-- Safe to run more than once in the Supabase SQL editor.
 
 create extension if not exists pgcrypto;
 
@@ -18,29 +17,97 @@ create table if not exists public.influencers (
   created_at timestamptz not null default now()
 );
 
--- Keep the newest cards first without an ORDER BY on every query.
-create index if not exists influencers_created_at_idx
-  on public.influencers (created_at desc);
+alter table public.influencers add column if not exists email text not null default '';
+alter table public.influencers add column if not exists phone text not null default '';
+alter table public.influencers add column if not exists location text not null default '';
+alter table public.influencers add column if not exists engagement_rate numeric(5, 2) not null default 0;
+alter table public.influencers add column if not exists average_views text not null default '';
+alter table public.influencers add column if not exists rate_per_reel text not null default '';
+alter table public.influencers add column if not exists status text not null default 'onboarding';
+alter table public.influencers add column if not exists notes text not null default '';
+alter table public.influencers add column if not exists is_published boolean not null default true;
+alter table public.influencers alter column is_published set default true;
+
+do $$ begin
+  alter table public.influencers add constraint influencers_status_check
+    check (status in ('onboarding', 'active', 'paused'));
+exception when duplicate_object then null;
+end $$;
+
+create index if not exists influencers_created_at_idx on public.influencers (created_at desc);
+create index if not exists influencers_status_idx on public.influencers (status);
+create index if not exists influencers_published_idx on public.influencers (is_published);
 
 alter table public.influencers enable row level security;
 
--- Public marketplace board: anyone can view and add a card, nobody can
--- edit or delete other people's cards from the client. Tighten this
--- (e.g. require auth.uid() = created_by) before using this in production
--- with real user accounts.
-create policy "Public read access"
+drop policy if exists "Public read access" on public.influencers;
+drop policy if exists "Public insert access" on public.influencers;
+drop policy if exists "Published profiles are public" on public.influencers;
+drop policy if exists "Authenticated admins can read all profiles" on public.influencers;
+drop policy if exists "Authenticated admins can create profiles" on public.influencers;
+drop policy if exists "Authenticated admins can update profiles" on public.influencers;
+drop policy if exists "Authenticated admins can delete profiles" on public.influencers;
+
+create policy "Published profiles are public"
   on public.influencers for select
+  to anon
+  using (is_published = true);
+
+create policy "Authenticated admins can read all profiles"
+  on public.influencers for select
+  to authenticated
   using (true);
 
-create policy "Public insert access"
+create policy "Authenticated admins can create profiles"
   on public.influencers for insert
+  to authenticated
   with check (true);
 
--- Seed data (optional) — matches the demo cards shown before Supabase is connected.
-insert into public.influencers (name, avatar_url, rating, reach, content_type, instagram_url, languages, platforms, reviews)
-values
-  ('Ayesha Noor', 'https://api.dicebear.com/9.x/avataaars/svg?seed=Ayesha%20Noor', 4.8, '245K', 'Comedy & Lifestyle Reels', 'https://instagram.com/', array['Urdu','English'], array['Instagram','TikTok'],
-    '[{"reviewer":"Mavme Studio","comment":"Turned our launch reel into the most-watched thing we have ever posted.","rating":5}]'::jsonb),
-  ('Bilal Siddiqui', 'https://api.dicebear.com/9.x/avataaars/svg?seed=Bilal%20Siddiqui', 4.6, '180K', 'Food & Restaurant Reviews', 'https://instagram.com/', array['Urdu','English'], array['Instagram','YouTube'],
-    '[{"reviewer":"Maryas Cafe","comment":"His review brought in a full week of reservations.","rating":5}]'::jsonb)
-on conflict do nothing;
+create policy "Authenticated admins can update profiles"
+  on public.influencers for update
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Authenticated admins can delete profiles"
+  on public.influencers for delete
+  to authenticated
+  using (true);
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'influencer-avatars',
+  'influencer-avatars',
+  true,
+  5000000,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Public can view influencer avatars" on storage.objects;
+drop policy if exists "Authenticated admins can upload influencer avatars" on storage.objects;
+drop policy if exists "Authenticated admins can update influencer avatars" on storage.objects;
+drop policy if exists "Authenticated admins can delete influencer avatars" on storage.objects;
+
+create policy "Public can view influencer avatars"
+  on storage.objects for select
+  using (bucket_id = 'influencer-avatars');
+
+create policy "Authenticated admins can upload influencer avatars"
+  on storage.objects for insert
+  to authenticated
+  with check (bucket_id = 'influencer-avatars');
+
+create policy "Authenticated admins can update influencer avatars"
+  on storage.objects for update
+  to authenticated
+  using (bucket_id = 'influencer-avatars')
+  with check (bucket_id = 'influencer-avatars');
+
+create policy "Authenticated admins can delete influencer avatars"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'influencer-avatars');

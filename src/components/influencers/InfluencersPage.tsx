@@ -1,11 +1,12 @@
 import { Diamond, SectionLabel, Reveal } from "@/components/site/ui";
 import { InfluencerCard } from "./InfluencerCard";
-import { AddInfluencerDialog } from "./AddInfluencerDialog";
 import { useInfluencers } from "@/hooks/useInfluencers";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "@tanstack/react-router";
+import { AlertCircle } from "lucide-react";
 
 export function InfluencersPage() {
-  const { data: influencers, isLoading } = useInfluencers();
+  const { data: influencers, isLoading, isError, refetch } = useInfluencers();
 
   return (
     <main className="min-h-screen bg-cream pb-32 pt-36 md:pt-44">
@@ -23,8 +24,8 @@ export function InfluencersPage() {
             </h1>
 
             <p className="mt-5 max-w-xl text-base leading-7 text-ink/60 md:text-lg">
-              Handpicked creators for product launches, cultural storytelling, and high-trust
-              brand collaborations.
+              Handpicked creators for product launches, cultural storytelling, and high-trust brand
+              collaborations.
             </p>
           </div>
 
@@ -35,7 +36,6 @@ export function InfluencersPage() {
                 {influencers?.length ?? 0} profiles
               </span>
             </div>
-            <AddInfluencerDialog />
           </div>
         </div>
 
@@ -51,10 +51,10 @@ export function InfluencersPage() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-7 lg:grid-cols-2">
           {isLoading && !influencers
             ? Array.from({ length: 4 }, (_, i) => (
-                <Skeleton key={i} className="h-[440px] w-full rounded-[20px]" />
+                <Skeleton key={i} className="h-[330px] w-full rounded-[28px]" />
               ))
             : influencers?.map((influencer, i) => (
                 <Reveal key={influencer.id} delay={Math.min(i, 4) * 80}>
@@ -62,6 +62,38 @@ export function InfluencersPage() {
                 </Reveal>
               ))}
         </div>
+
+        {isError && (
+          <div className="flex min-h-64 flex-col items-center justify-center rounded-[3px] border border-ink/10 bg-paper p-8 text-center">
+            <AlertCircle className="mb-4 size-7 text-brown" />
+            <h2 className="text-xl font-bold text-ink">The roster is unavailable</h2>
+            <p className="mt-2 max-w-md text-sm leading-6 text-ink/55">
+              Please try again in a moment.
+            </p>
+            <button
+              onClick={() => void refetch()}
+              className="mt-5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white hover:bg-brown"
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
+        {!isLoading && !isError && influencers?.length === 0 && (
+          <div className="flex min-h-64 flex-col items-center justify-center rounded-[3px] border border-dashed border-ink/15 p-8 text-center">
+            <h2 className="text-xl font-bold text-ink">Our roster is being curated.</h2>
+            <p className="mt-2 max-w-md text-sm leading-6 text-ink/55">
+              New creator profiles will appear here as they are published.
+            </p>
+            <Link
+              to="/"
+              hash="contact"
+              className="mt-5 text-sm font-semibold text-brown underline-offset-4 hover:underline"
+            >
+              Plan a campaign ↗
+            </Link>
+          </div>
+        )}
       </div>
     </main>
   );

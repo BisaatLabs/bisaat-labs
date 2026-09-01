@@ -7,7 +7,6 @@ import { Work } from "@/components/site/Work";
 import { Philosophy } from "@/components/site/Philosophy";
 import { Reels } from "@/components/site/Reels";
 import { Services } from "@/components/site/Services";
-import { DigitalExperience } from "@/components/site/DigitalExperience";
 import { Podcast } from "@/components/site/Podcast";
 import { ProcessAndFooter } from "@/components/site/ProcessAndFooter";
 
@@ -30,7 +29,6 @@ function Index() {
         <Philosophy />
         <Reels />
         <Services />
-        <DigitalExperience />
         <Podcast />
         <ProcessAndFooter />
       </main>

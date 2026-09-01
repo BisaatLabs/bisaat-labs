@@ -1,95 +1,119 @@
 import { useEffect, useRef, useState } from "react";
-import instantCamera from "@/assets/hero-instant-camera.webp";
-import filmReel from "@/assets/hero-film-reel.webp";
-import studioMic from "@/assets/hero-studio-mic.webp";
-import { Diamond, Magnetic } from "./ui";
+import heroImage from "@/assets/hero-agency-transparent.webp";
+import { Magnetic } from "./ui";
 
-export function Hero() {
-  const [ready, setReady] = useState(false);
-  const visual = useRef<HTMLDivElement>(null);
+const metrics = [
+  { value: 20, suffix: "+", label: "Clients partnered" },
+  { value: 30, suffix: "+", label: "Influencers onboard" },
+  { value: 50, suffix: "+", label: "Campaigns delivered" },
+  { value: 5, suffix: "", label: "Services, one studio", pad: 2 },
+];
+
+function AnimatedNumber({
+  value,
+  suffix,
+  pad = 0,
+}: {
+  value: number;
+  suffix: string;
+  pad?: number;
+}) {
+  const [display, setDisplay] = useState(0);
+  const numberRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 80);
-    const move = (event: PointerEvent) => {
-      if (
-        !visual.current ||
-        matchMedia("(pointer: coarse), (prefers-reduced-motion: reduce)").matches
-      )
-        return;
-      visual.current.style.setProperty("--x", `${(event.clientX / innerWidth - 0.5) * 18}px`);
-      visual.current.style.setProperty("--y", `${(event.clientY / innerHeight - 0.5) * 14}px`);
-    };
-    addEventListener("pointermove", move, { passive: true });
-    return () => {
-      clearTimeout(timer);
-      removeEventListener("pointermove", move);
-    };
-  }, []);
+    const node = numberRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          setDisplay(value);
+          return;
+        }
+
+        const startedAt = performance.now();
+        const duration = 1100;
+        const tick = (now: number) => {
+          const progress = Math.min((now - startedAt) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setDisplay(Math.round(value * eased));
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      },
+      { threshold: 0.45 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [value]);
 
   return (
-    <section id="top" className={`hero-v3 ${ready ? "is-ready" : ""}`}>
-      <div className="hero-v3-grid" aria-hidden />
-      <div className="hero-v3-topline">
-        <span>
-          <Diamond className="size-1.5" /> Bisaat Labs / Karachi
-        </span>
-        <span className="hidden md:block">Rooted locally · Fluent globally</span>
-      </div>
+    <span ref={numberRef}>
+      {display.toString().padStart(pad, "0")}
+      {suffix}
+    </span>
+  );
+}
 
-      <div className="hero-v3-layout">
-        <div className="hero-v3-copy">
-          <p className="hero-kicker">A space where brands come to life</p>
-          <h1>
-            <span>We help brands</span>
-            <span>show up better.</span>
-          </h1>
-          <p className="hero-v3-description">
-            Content, social, websites and creative production—brought together with one clear point
-            of view.
-          </p>
-          <div className="hero-actions">
-            <Magnetic href="#contact" className="hero-primary">
-              Start a Project <span>↗</span>
-            </Magnetic>
-            <a href="#work" className="hero-secondary">
-              See our work <span>↓</span>
-            </a>
+export function Hero() {
+  return (
+    <>
+      <section id="top" className="agency-hero">
+        <div className="agency-hero-grid" aria-hidden="true" />
+
+        <div className="agency-hero-inner">
+          <div className="agency-hero-copy">
+            <h1>
+              <span>We help brands</span>
+              <span>show up better.</span>
+            </h1>
+
+            <p className="agency-hero-description">
+              Strategy, content, social, websites, and production—built as one clear, connected
+              brand experience.
+            </p>
+
+            <div className="agency-hero-actions">
+              <Magnetic href="#contact" className="agency-hero-primary">
+                Start a Project <span>↗</span>
+              </Magnetic>
+              <a href="#work" className="agency-hero-secondary">
+                Explore selected work <span>↓</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="agency-hero-image-wrap" aria-hidden="true">
+            <img
+              src={heroImage}
+              alt=""
+              width={1536}
+              height={1024}
+              fetchPriority="high"
+              decoding="async"
+              className="agency-hero-image"
+            />
           </div>
         </div>
+      </section>
 
-        <div ref={visual} className="hero-v3-visual" aria-label="Bisaat creative production">
-          <img
-            className="hero-object hero-object-camera"
-            src={instantCamera}
-            alt="Professional instant camera"
-            fetchPriority="high"
-            decoding="async"
-          />
-          <img
-            className="hero-object hero-object-reel"
-            src={filmReel}
-            alt="Vintage film reel"
-            decoding="async"
-          />
-          <img
-            className="hero-object hero-object-mic"
-            src={studioMic}
-            alt="Professional studio microphone"
-            decoding="async"
-          />
+      <section className="agency-metrics" aria-label="Bisaat Labs in numbers">
+        <div className="agency-metrics-inner">
+          {metrics.map((metric) => (
+            <div key={metric.label} className="agency-metric">
+              <strong>
+                <AnimatedNumber value={metric.value} suffix={metric.suffix} pad={metric.pad} />
+              </strong>
+              <span>{metric.label}</span>
+            </div>
+          ))}
         </div>
-      </div>
-
-      <div className="hero-marquee" aria-hidden>
-        <div>
-          BRAND SHOOTS <b>◆</b> SOCIAL <b>◆</b> REELS & VIDEO <b>◆</b> WEBSITES <b>◆</b> PODCASTS{" "}
-          <b>◆</b> CREATIVE CAMPAIGNS <b>◆</b>
-        </div>
-        <div>
-          BRAND SHOOTS <b>◆</b> SOCIAL <b>◆</b> REELS & VIDEO <b>◆</b> WEBSITES <b>◆</b> PODCASTS{" "}
-          <b>◆</b> CREATIVE CAMPAIGNS <b>◆</b>
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

@@ -1,78 +1,81 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 
-// Hash links always target the homepage sections. From any other route this
-// still works: the browser navigates to "/" and then jumps/smooth-scrolls to
-// the section once it mounts (Lenis handles the smooth part via `anchors`).
 const links = [
   { label: "Work", href: "/#work" },
   { label: "Services", href: "/#services" },
   { label: "Studio", href: "/#studio" },
-];
+] as const;
 
 export function Nav() {
   const [solid, setSolid] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const on = () => setSolid(window.scrollY > 80);
-    on();
-    window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
+    const onScroll = () => setSolid(window.scrollY > 48);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Off the homepage there's nothing to scroll to yet, so keep the bar solid
-  // for legibility instead of floating transparent over page content.
-  const isHome = pathname === "/";
-  const showSolid = solid || !isHome;
+  useEffect(() => setMenuOpen(false), [pathname]);
+
+  const showSolid = solid || pathname !== "/" || menuOpen;
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      className="fixed inset-x-0 top-0 z-50 transition-all duration-500"
-      style={{
-        backgroundColor: showSolid ? "rgba(243,230,215,0.82)" : "transparent",
-        backdropFilter: showSolid ? "blur(14px)" : "none",
-      }}
-    >
-      <nav className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-12">
-        <Link to="/" hash="top" className="flex items-center gap-3" aria-label="Bisaat Labs home">
-          <img
-            src="/bisaat-logo-transparent.webp"
-            alt="Bisaat Labs"
-            width={140}
-            height={140}
-            className="h-12 w-24 object-contain md:h-14 md:w-28"
-          />
+    <header className={`site-nav ${showSolid ? "is-solid" : ""} ${menuOpen ? "is-open" : ""}`}>
+      <nav className="site-nav-shell" aria-label="Main navigation">
+        <Link
+          to="/"
+          hash="top"
+          className="site-nav-logo"
+          aria-label="Bisaat Labs home"
+          onClick={closeMenu}
+        >
+          <img src="/bisaat-logo-transparent.webp" alt="" width={500} height={333} />
         </Link>
-        <div className="flex items-center gap-8">
-          <ul className="hidden items-center gap-8 md:flex">
-            {links.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  className="label-xs text-ink/70 transition-colors hover:text-brown"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <Link
-                to="/influencers"
-                className="label-xs text-ink/70 transition-colors hover:text-brown data-[status=active]:text-brown"
-              >
-                Influencers
-              </Link>
+
+        <ul className="site-nav-links">
+          {links.map((link) => (
+            <li key={link.href}>
+              <a href={link.href}>{link.label}</a>
             </li>
-          </ul>
-          <a
-            href="/#contact"
-            className="label-xs rounded-full border border-ink/20 px-5 py-2.5 text-ink transition-colors duration-300 hover:border-brown hover:text-brown"
-          >
-            Start a Project ↗
-          </a>
-        </div>
+          ))}
+          <li>
+            <Link to="/influencers" activeProps={{ "aria-current": "page" }}>
+              Influencers
+            </Link>
+          </li>
+        </ul>
+
+        <button
+          type="button"
+          className="site-nav-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span>{menuOpen ? "Close" : "Menu"}</span>
+          <i aria-hidden="true" />
+        </button>
       </nav>
+
+      <div id="mobile-navigation" className="site-nav-mobile" aria-hidden={!menuOpen}>
+        <div className="site-nav-mobile-inner">
+          {links.map((link) => (
+            <a key={link.href} href={link.href} onClick={closeMenu}>
+              <strong>{link.label}</strong>
+              <i aria-hidden="true">↗</i>
+            </a>
+          ))}
+          <Link to="/influencers" onClick={closeMenu}>
+            <strong>Influencers</strong>
+            <i aria-hidden="true">↗</i>
+          </Link>
+        </div>
+      </div>
     </header>
   );
 }

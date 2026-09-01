@@ -1,164 +1,154 @@
 import { useState } from "react";
-import { Star, Instagram, Globe2, Radio, Quote } from "lucide-react";
+import { ChevronDown, Eye, Instagram, MapPin, PlayCircle, Star, UsersRound } from "lucide-react";
 import type { Influencer } from "@/lib/supabase";
+import { avatarFor } from "@/data/demo-influencers";
 import { cn } from "@/lib/utils";
 
-function Stars({ rating }: { rating: number }) {
+function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-1" aria-label={`${rating} out of 5 stars`}>
-      {Array.from({ length: 5 }, (_, i) => {
-        const filled = rating >= i + 1;
-        const half = !filled && rating > i && rating < i + 1;
-        return (
-          <Star
-            key={i}
-            className={cn(
-              "size-3.5",
-              filled || half ? "fill-brown text-brown" : "fill-transparent text-ink/25",
-            )}
-            style={half ? { clipPath: "inset(0 50% 0 0)" } : undefined}
-          />
-        );
-      })}
-      <span className="ml-1 text-xs font-semibold text-ink/70">{rating.toFixed(1)}</span>
+    <div className="flex min-w-0 items-center gap-3">
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-cream text-brown">
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-ink/35">
+          {label}
+        </span>
+        <strong className="mt-0.5 block truncate text-sm font-bold text-ink">{value}</strong>
+      </span>
     </div>
   );
 }
 
 export function InfluencerCard({ influencer }: { influencer: Influencer }) {
-  const [flipped, setFlipped] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const avatar = influencer.avatar_url || avatarFor(influencer.name);
+  const averageViews = influencer.average_views || "Not shared";
+  const engagement = influencer.engagement_rate
+    ? `${influencer.engagement_rate.toFixed(1)}%`
+    : `${influencer.rating.toFixed(1)} / 5`;
 
   return (
-    <div
-      className={cn("flip-card group h-[440px] w-full cursor-pointer", flipped && "is-flipped")}
-      onClick={() => setFlipped((f) => !f)}
-      role="button"
-      tabIndex={0}
-      aria-pressed={flipped}
-      aria-label={`${influencer.name} — tap to ${flipped ? "see summary" : "see details"}`}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          setFlipped((f) => !f);
-        }
-      }}
-    >
-      <div className="flip-card-inner">
-        {/* Front */}
-        <div className="flip-card-face flip-card-front overflow-hidden rounded-[3px] border border-ink/10 bg-paper p-6 shadow-[0_20px_50px_rgba(28,24,21,0.08)]">
-          <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <div className="relative mb-5 size-28 overflow-hidden rounded-full border-2 border-brown/30 bg-cream">
-              <img
-                src={influencer.avatar_url}
-                alt={influencer.name}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-bold tracking-[-0.02em] text-ink">{influencer.name}</h3>
-            <p className="label-xs mt-2 text-brown">{influencer.content_type}</p>
-            <div className="mt-4">
-              <Stars rating={influencer.rating} />
-            </div>
-            <div className="mt-6 flex items-center gap-2 rounded-full bg-cream px-4 py-2">
-              <Radio className="size-3.5 text-teal" />
-              <span className="text-sm font-semibold text-ink">{influencer.reach}</span>
-              <span className="label-xs text-ink/45">reach</span>
-            </div>
-          </div>
-          <p className="label-xs mt-4 text-center text-ink/35">Tap to see details ↻</p>
-        </div>
-
-        {/* Back */}
-        <div className="flip-card-face flip-card-back flex flex-col overflow-hidden rounded-[3px] border border-ink/10 bg-ink p-6 text-white shadow-[0_20px_50px_rgba(28,24,21,0.25)]">
-          <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+    <article className="group overflow-hidden rounded-[28px] border border-ink/[0.08] bg-paper shadow-[0_18px_55px_rgba(28,24,21,0.07)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(28,24,21,0.12)]">
+      <div className="relative p-5 sm:p-6">
+        <div className="grid items-center gap-6 sm:grid-cols-[150px_1fr]">
+          <div className="mx-auto size-36 overflow-hidden rounded-full border border-ink/10 bg-cream p-1 shadow-[0_12px_35px_rgba(28,24,21,0.1)] sm:mx-0 sm:size-[150px]">
             <img
-              src={influencer.avatar_url}
-              alt=""
-              aria-hidden
+              src={avatar}
+              alt={influencer.name}
               loading="lazy"
               decoding="async"
-              className="size-10 rounded-full border border-white/20 object-cover"
+              className="h-full w-full rounded-full object-cover"
             />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-bold">{influencer.name}</p>
-              <p className="label-xs text-white/45">{influencer.content_type}</p>
-            </div>
           </div>
 
-          <div className="mt-4 flex-1 space-y-4 overflow-y-auto pr-1 text-sm">
-            <a
-              href={influencer.instagram_url}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-2 rounded-full bg-brown px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-brown/85"
-            >
-              <Instagram className="size-4" /> View Instagram profile ↗
-            </a>
-
-            <div>
-              <p className="label-xs mb-1.5 flex items-center gap-1.5 text-white/45">
-                <Globe2 className="size-3.5" /> Makes reels in
+          <div className="min-w-0 text-center sm:text-left">
+            <h3 className="pr-6 text-xl font-extrabold tracking-[-0.03em] text-ink sm:text-2xl">
+              {influencer.name}
+            </h3>
+            <p className="mt-1.5 text-xs font-semibold text-brown">{influencer.content_type}</p>
+            {influencer.location && (
+              <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-ink/40 sm:justify-start">
+                <MapPin className="size-3.5" /> {influencer.location}
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                {influencer.languages.length > 0 ? (
-                  influencer.languages.map((lang) => (
-                    <span key={lang} className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                      {lang}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-xs text-white/40">Not specified</span>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <p className="label-xs mb-1.5 text-white/45">Active on</p>
-              <div className="flex flex-wrap gap-1.5">
-                {influencer.platforms.length > 0 ? (
-                  influencer.platforms.map((platform) => (
-                    <span
-                      key={platform}
-                      className="rounded-full border border-teal/50 bg-teal/15 px-3 py-1 text-xs text-teal-100"
-                    >
-                      {platform}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-xs text-white/40">Not specified</span>
-                )}
-              </div>
-            </div>
-
-            {influencer.reviews.length > 0 && (
-              <div>
-                <p className="label-xs mb-1.5 text-white/45">Reviews</p>
-                <div className="space-y-2">
-                  {influencer.reviews.map((review, i) => (
-                    <div key={i} className="rounded-md bg-white/5 p-3">
-                      <div className="flex items-start gap-2">
-                        <Quote className="mt-0.5 size-3 shrink-0 text-brown" />
-                        <p className="text-xs leading-5 text-white/75">{review.comment}</p>
-                      </div>
-                      <div className="mt-1.5 flex items-center justify-between pl-5">
-                        <span className="text-[11px] font-semibold text-white/55">
-                          — {review.reviewer}
-                        </span>
-                        <span className="text-[11px] text-brown">{review.rating.toFixed(1)} ★</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             )}
-          </div>
 
-          <p className="label-xs mt-3 text-center text-white/30">Tap to flip back ↻</p>
+            <div className="mt-5 grid grid-cols-1 gap-3 text-left min-[430px]:grid-cols-3 sm:grid-cols-1">
+              <Stat
+                icon={<UsersRound className="size-4" />}
+                label="Reach"
+                value={influencer.reach || "—"}
+              />
+              <Stat icon={<Eye className="size-4" />} label="Avg. views" value={averageViews} />
+              <Stat
+                icon={<PlayCircle className="size-4" />}
+                label="Engagement"
+                value={engagement}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-[1fr_auto] gap-3 border-t border-ink/[0.08] pt-5">
+          <a
+            href={influencer.instagram_url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-ink px-4 text-xs font-bold text-white transition-colors hover:bg-brown focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brown focus-visible:ring-offset-2"
+          >
+            <Instagram className="size-4" /> View profile
+          </a>
+          <button
+            type="button"
+            onClick={() => setExpanded((current) => !current)}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-ink/10 bg-cream px-4 text-xs font-bold text-ink transition-colors hover:border-brown hover:text-brown focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brown focus-visible:ring-offset-2"
+            aria-expanded={expanded}
+          >
+            Details
+            <ChevronDown className={cn("size-4 transition-transform", expanded && "rotate-180")} />
+          </button>
         </div>
       </div>
-    </div>
+
+      <div
+        className={cn(
+          "grid transition-[grid-template-rows] duration-500 ease-out",
+          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="border-t border-ink/[0.08] bg-cream/45 px-5 py-5 sm:px-6">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink/35">
+                  Languages
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {(influencer.languages.length ? influencer.languages : ["Not specified"]).map(
+                    (item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-ink/10 bg-paper px-3 py-1 text-xs text-ink/60"
+                      >
+                        {item}
+                      </span>
+                    ),
+                  )}
+                </div>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink/35">
+                  Platforms
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {(influencer.platforms.length ? influencer.platforms : ["Not specified"]).map(
+                    (item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-teal/25 bg-teal/10 px-3 py-1 text-xs text-teal"
+                      >
+                        {item}
+                      </span>
+                    ),
+                  )}
+                </div>
+              </div>
+            </div>
+            {influencer.reviews[0] && (
+              <blockquote className="mt-5 rounded-2xl bg-paper p-4 text-xs leading-5 text-ink/60">
+                “{influencer.reviews[0].comment}”
+                <footer className="mt-2 flex items-center justify-between gap-3 font-bold text-ink/45">
+                  <span>— {influencer.reviews[0].reviewer}</span>
+                  <span className="inline-flex items-center gap-1 text-brown">
+                    <Star className="size-3 fill-current" />{" "}
+                    {influencer.reviews[0].rating.toFixed(1)}
+                  </span>
+                </footer>
+              </blockquote>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }

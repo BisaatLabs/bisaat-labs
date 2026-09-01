@@ -15,6 +15,15 @@ export type Influencer = {
   languages: string[];
   platforms: string[];
   reviews: InfluencerReview[];
+  email?: string;
+  phone?: string;
+  location?: string;
+  engagement_rate?: number;
+  average_views?: string;
+  rate_per_reel?: string;
+  status?: "onboarding" | "active" | "paused";
+  notes?: string;
+  is_published?: boolean;
   created_at?: string;
 };
 
@@ -24,18 +33,15 @@ const env = import.meta.env as Record<string, string | undefined>;
 const supabaseUrl = env["VITE_SUPABASE_URL"];
 const supabaseAnonKey = env["VITE_SUPABASE_ANON_KEY"];
 
-// Toggle this to true when you are ready to connect Supabase again.
-// When false, the app stays entirely local/demo-first and avoids any runtime issues.
-const ENABLE_SUPABASE = false;
-
 /** True once real Supabase project credentials are supplied via env vars. */
-export const isSupabaseConfigured = ENABLE_SUPABASE && Boolean(supabaseUrl && supabaseAnonKey);
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
-// When you are ready to use Supabase again, uncomment the import and client setup below.
-// import { createClient } from "@supabase/supabase-js";
-// export const supabase = createClient(supabaseUrl!, supabaseAnonKey!, {
-//   auth: { persistSession: false },
-// });
-export const supabase = null;
+import { createClient } from "@supabase/supabase-js";
+
+export const supabase = isSupabaseConfigured
+  ? createClient(supabaseUrl!, supabaseAnonKey!, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+    })
+  : null;
 
 export const INFLUENCERS_TABLE = "influencers";

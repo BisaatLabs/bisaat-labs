@@ -1,114 +1,42 @@
-import { useState } from "react";
-import camera from "@/assets/camera.webp";
-import mic from "@/assets/mic.webp";
-import reel from "@/assets/reel-2.webp";
-import work from "@/assets/work-mure.webp";
+import servicesVisual from "@/assets/services-under-one-roof.webp";
 import { Reveal, SectionLabel } from "./ui";
 
-const services = [
-  {
-    name: "Brand Shoots",
-    note: "Still life, people and product worlds.",
-    kind: "image",
-    src: camera,
-  },
-  {
-    name: "Social Media",
-    note: "A feed with taste, rhythm and a point of view.",
-    kind: "portrait",
-    src: reel,
-  },
-  {
-    name: "Reels & Video",
-    note: "Short-form stories people choose to watch.",
-    kind: "portrait",
-    src: work,
-  },
-  { name: "Editing", note: "Pacing, colour and sound with purpose.", kind: "timeline" },
-  { name: "Websites", note: "Digital homes that feel unmistakably yours.", kind: "browser" },
-  { name: "Podcasts", note: "Conversations built to travel further.", kind: "image", src: mic },
-  { name: "Creative Campaigns", note: "One clear idea across every screen.", kind: "type" },
-];
-
-function ServiceVisual({ item }: { item: (typeof services)[number] }) {
-  if (item.kind === "timeline")
-    return (
-      <div className="service-timeline">
-        <i />
-        <i />
-        <i />
-        <i />
-      </div>
-    );
-  if (item.kind === "browser")
-    return (
-      <div className="service-browser">
-        <span />
-        <strong>
-          Ideas need
-          <br />a good home.
-        </strong>
-        <i />
-      </div>
-    );
-  if (item.kind === "type")
-    return (
-      <div className="service-type">
-        <span>ONE</span>
-        <span>GOOD</span>
-        <span>IDEA.</span>
-      </div>
-    );
-  return (
-    <img
-      src={item.src}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      className={item.kind === "portrait" ? "service-portrait" : "service-object"}
-    />
-  );
-}
-
 export function Services() {
-  const [active, setActive] = useState(0);
   return (
-    <section id="services" className="bg-paper px-6 py-28 md:px-12 md:py-44">
+    <section id="services" className="services-section bg-paper px-6 py-28 md:px-12 md:py-44">
       <div className="mx-auto max-w-[1600px]">
-        <Reveal>
-          <SectionLabel>What we do</SectionLabel>
-        </Reveal>
-        <div className="mt-8 grid gap-14 lg:grid-cols-[1.1fr_.9fr] lg:gap-20">
-          <div>
+        <div className="services-layout">
+          <div className="services-copy">
             <Reveal>
-              <h2 className="section-title">
-                One Bisaat.
+              <SectionLabel>Everything under one umbrella</SectionLabel>
+            </Reveal>
+            <Reveal>
+              <h2 className="section-title mt-7">
+                You bring the ambition.
                 <br />
-                Many ways to show up.
+                <span>We handle everything.</span>
               </h2>
             </Reveal>
-            <div className="service-stage mt-14" aria-live="polite">
-              <ServiceVisual item={services[active] ?? services[0]!} />
+            <Reveal>
+              <p className="services-intro">
+                One creative partner from the first idea to the final launch—so every part of your
+                brand feels considered, connected and unmistakably yours.
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal className="services-visual-wrap">
+            <div className="services-visual" aria-label="Bisaat Labs services under one roof">
+              <img
+                src={servicesVisual}
+                alt="A creative director working beneath an umbrella, surrounded by Bisaat Labs services"
+                width={1448}
+                height={1086}
+                loading="lazy"
+                decoding="async"
+              />
             </div>
-          </div>
-          <div className="divide-y divide-ink/10 border-y border-ink/10 self-end">
-            {services.map((item, index) => (
-              <button
-                key={item.name}
-                onMouseEnter={() => setActive(index)}
-                onFocus={() => setActive(index)}
-                onClick={() => setActive(index)}
-                className={`service-row ${active === index ? "is-active" : ""}`}
-              >
-                <span className="label-xs">0{index + 1}</span>
-                <span>
-                  <strong>{item.name}</strong>
-                  <small>{item.note}</small>
-                </span>
-                <span aria-hidden>↗</span>
-              </button>
-            ))}
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
