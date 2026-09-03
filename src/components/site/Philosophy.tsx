@@ -25,7 +25,7 @@ export function Philosophy() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-paper px-6 py-40 md:px-12 md:py-64">
+    <section className="site-section relative overflow-hidden bg-paper px-6 md:px-12">
       <svg
         aria-hidden
         viewBox="0 0 1200 400"

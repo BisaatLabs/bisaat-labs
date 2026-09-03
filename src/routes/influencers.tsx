@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
-import { Cursor } from "@/components/site/Cursor";
 import { InfluencersPage } from "@/components/influencers/InfluencersPage";
 
 export const Route = createFileRoute("/influencers")({
@@ -20,7 +19,6 @@ export const Route = createFileRoute("/influencers")({
 function Influencers() {
   return (
     <>
-      <Cursor />
       <Nav />
       <InfluencersPage />
     </>

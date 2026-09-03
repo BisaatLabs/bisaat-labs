@@ -3,7 +3,7 @@ import { Reveal, SectionLabel } from "./ui";
 
 export function Services() {
   return (
-    <section id="services" className="services-section bg-paper px-6 py-28 md:px-12 md:py-44">
+    <section id="services" className="site-section services-section bg-paper px-6 md:px-12">
       <div className="mx-auto max-w-[1600px]">
         <div className="services-layout">
           <div className="services-copy">

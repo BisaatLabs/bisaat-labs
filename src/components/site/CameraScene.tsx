@@ -1,189 +1,163 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import camera from "@/assets/camera.webp";
-import gullak from "@/assets/work-gullakwala.webp";
-import mure from "@/assets/work-mure.webp";
-import mavme from "@/assets/work-mavme.webp";
-import zen from "@/assets/work-zensphere.webp";
-import arooma from "@/assets/work-arooma.webp";
+import camera from "@/assets/story-camera.png";
+import aroomat from "@/assets/story-aroomat.png";
+import maryas from "@/assets/story-maryas.png";
+import mavme from "@/assets/story-mavme.png";
+import mure from "@/assets/story-mure.png";
+import zenssphere from "@/assets/story-zenssphere.png";
+import background from "@/assets/story-background.jpg";
 
-const orbit = [
-  {
-    src: gullak,
-    label: "Gullakwala",
-    x: -34,
-    y: -26,
-    r: -7,
-    s: 0.78,
-    cls: "w-[30vw] md:w-[19vw] aspect-[4/5]",
-  },
-  {
-    src: mure,
-    label: "Mure",
-    x: 34,
-    y: -22,
-    r: 6,
-    s: 0.82,
-    cls: "w-[34vw] md:w-[22vw] aspect-[3/2]",
-  },
-  {
-    src: mavme,
-    label: "Mavme",
-    x: -30,
-    y: 25,
-    r: 5,
-    s: 0.72,
-    cls: "w-[28vw] md:w-[17vw] aspect-[4/5]",
-  },
-  {
-    src: zen,
-    label: "Zensphere",
-    x: 32,
-    y: 27,
-    r: -5,
-    s: 0.76,
-    cls: "w-[32vw] md:w-[20vw] aspect-[7/5]",
-  },
-  {
-    src: arooma,
-    label: "Arooma",
-    x: 0,
-    y: 2,
-    r: 0,
-    s: 1.15,
-    cls: "w-[52vw] md:w-[30vw] aspect-[4/5]",
-  },
-];
+const brands = [
+  { src: mavme, name: "Mavme", position: "top-left" },
+  { src: maryas, name: "Maryas Cafe", position: "top-right" },
+  { src: mure, name: "Mure", position: "bottom-left" },
+  { src: aroomat, name: "Aroomat", position: "middle-right" },
+  { src: zenssphere, name: "Zenssphere", position: "bottom-right" },
+] as const;
 
 export function CameraScene() {
-  const root = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const el = root.current;
-    if (!el) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const section = root.current;
+    if (!section) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     gsap.registerPlugin(ScrollTrigger);
 
-    const ctx = gsap.context(() => {
-      if (reduced) {
-        gsap.set(".cam-photo", { opacity: 1 });
-        gsap.set(".cam-body", { opacity: 1, scale: 1, y: 0 });
+    const context = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>(".brand-story-card");
+
+      if (reducedMotion) {
+        gsap.set(
+          [".brand-story-intro", ".brand-story-message--final", ".brand-story-camera", ...cards],
+          {
+            clearProps: "all",
+            autoAlpha: 1,
+          },
+        );
+        gsap.set(".brand-story-message--initial", { autoAlpha: 0 });
         return;
       }
 
-      const tl = gsap.timeline({
+      gsap.set(".brand-story-message--final", { autoAlpha: 0 });
+
+      const timeline = gsap.timeline({
+        defaults: { ease: "power3.out" },
         scrollTrigger: {
-          trigger: el,
+          trigger: section,
           start: "top top",
-          end: "+=320%",
+          end: () => `+=${window.innerWidth < 768 ? 175 : 230}%`,
           pin: true,
-          scrub: 1,
+          scrub: 0.35,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
         },
       });
 
-      tl.fromTo(
-        ".cam-body",
-        { y: "42vh", scale: 0.6, rotateY: -26, rotateX: 10, opacity: 0 },
-        {
-          y: "0vh",
-          scale: 1,
-          rotateY: -6,
-          rotateX: 2,
-          opacity: 1,
-          ease: "power2.out",
-          duration: 1.1,
-        },
-      )
-        .fromTo(".cam-line-1", { opacity: 1, y: 0 }, { opacity: 0, y: -60, duration: 0.5 }, 0.55)
-        .fromTo(".cam-line-2", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6 }, 0.85)
+      timeline
         .fromTo(
-          ".cam-glint",
-          { xPercent: -140, opacity: 0 },
-          { xPercent: 140, opacity: 0.85, duration: 0.7 },
-          1.35,
+          ".brand-story-intro",
+          { autoAlpha: 0, y: 30 },
+          { autoAlpha: 1, y: 0, duration: 0.55 },
         )
-        .to(".cam-glint", { opacity: 0, duration: 0.2 }, 2.0);
+        .fromTo(
+          ".brand-story-camera",
+          { autoAlpha: 0, y: "14vh", scale: 0.64, rotateX: 8 },
+          { autoAlpha: 1, y: 0, scale: 1, rotateX: 0, duration: 0.8 },
+          0.42,
+        )
+        .to(
+          ".brand-story-message--initial",
+          { autoAlpha: 0, y: -18, duration: 0.34, ease: "power2.in" },
+          1.16,
+        )
+        .fromTo(
+          ".brand-story-message--final",
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.42 },
+          1.32,
+        )
+        .to(".brand-story-camera", { scale: 0.92, y: "2vh", duration: 0.5 }, 1.22);
 
-      orbit.forEach((o, i) => {
-        tl.fromTo(
-          `.cam-photo-${i}`,
-          { xPercent: 0, yPercent: 0, scale: 0.4, opacity: 0, rotate: 0, filter: "blur(10px)" },
+      cards.forEach((card, index) => {
+        timeline.fromTo(
+          card,
           {
-            xPercent: o.x * 3.1,
-            yPercent: o.y * 3.1,
-            scale: 1,
-            rotate: o.r,
-            opacity: 1,
-            filter: "blur(0px)",
-            ease: "power3.out",
-            duration: 1.1,
+            autoAlpha: 0,
+            x: () => {
+              const bounds = card.getBoundingClientRect();
+              return window.innerWidth / 2 - (bounds.left + bounds.width / 2);
+            },
+            y: () => {
+              const bounds = card.getBoundingClientRect();
+              return window.innerHeight * 0.59 - (bounds.top + bounds.height / 2);
+            },
+            scale: 0.28,
           },
-          1.6 + i * 0.22,
+          { autoAlpha: 1, x: 0, y: 0, scale: 1, duration: 0.68 },
+          1.4 + index * 0.07,
         );
       });
 
-      tl.to(".cam-body", { scale: 0.55, opacity: 0.12, filter: "blur(4px)", duration: 0.9 }, 2.9)
-        .to(".cam-line-2", { opacity: 0, y: -40, duration: 0.5 }, 3.0)
-        .to(".cam-photo", { scale: 1.35, duration: 1 }, 3.2);
-    }, el);
+      timeline.to(".brand-story-camera", { scale: 0.88, duration: 0.45 }, 1.92);
+    }, section);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, []);
 
   return (
     <section
       ref={root}
-      className="relative flex h-[100svh] items-center justify-center overflow-hidden bg-cream"
-      aria-label="How we shoot"
+      className="brand-story"
+      aria-labelledby="brand-story-title"
+      style={{ "--brand-story-background": `url("${background}")` } as CSSProperties}
     >
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center">
-        <h2 className="relative text-[clamp(2rem,5.4vw,4.6rem)] font-extrabold leading-[1.02] tracking-[-0.03em]">
-          <span className="cam-line-1 block">We don't just shoot content.</span>
-          <span className="cam-line-2 absolute inset-x-0 top-0 block opacity-0">
-            We build worlds around brands.
-          </span>
-        </h2>
+      <header className="brand-story-intro">
+        <span className="brand-story-label">Our approach</span>
+        <div className="brand-story-message brand-story-message--initial">
+          <h2 id="brand-story-title">
+            We don't just shoot <em>content.</em>
+          </h2>
+          <p>We craft visuals that tell stories, build brands and create lasting impact.</p>
+        </div>
+        <div className="brand-story-message brand-story-message--final" aria-hidden="true">
+          <h2>
+            We build brands <em>people remember.</em>
+          </h2>
+          <p>Distinct ideas, beautifully made and designed to stay with your audience.</p>
+        </div>
+      </header>
+
+      <div className="brand-story-camera">
+        <img
+          src={camera}
+          alt="Vintage professional camera"
+          width={900}
+          height={900}
+          loading="lazy"
+          decoding="async"
+        />
+        <span className="brand-story-focus" aria-hidden="true" />
       </div>
 
-      <div className="relative h-full w-full" style={{ perspective: "1400px" }}>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="cam-body relative w-[64vw] max-w-[560px] opacity-0 md:w-[34vw]">
-            <img
-              src={camera}
-              alt="Professional cinema camera"
-              width={1280}
-              height={1280}
-              loading="lazy"
-              className="w-full drop-shadow-[0_60px_80px_rgba(28,24,21,0.28)]"
-            />
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-              <div
-                className="cam-glint absolute inset-y-0 w-1/3 opacity-0"
-                style={{
-                  background:
-                    "linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent)",
-                }}
+      <div className="brand-story-brands" aria-label="Brands featured in our work">
+        {brands.map((brand) => (
+          <div key={brand.name} className={`brand-story-slot brand-story-slot--${brand.position}`}>
+            <figure className="brand-story-card">
+              <img
+                src={brand.src}
+                alt={`${brand.name} brand card`}
+                width={520}
+                height={520}
+                loading="lazy"
+                decoding="async"
               />
-            </div>
+              <figcaption>{brand.name}</figcaption>
+            </figure>
           </div>
-        </div>
-
-        {orbit.map((o, i) => (
-          <figure
-            key={o.label}
-            className={`cam-photo cam-photo-${i} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 ${o.cls}`}
-            style={{ zIndex: i === 4 ? 1 : 3 }}
-          >
-            <img
-              src={o.src}
-              alt={`${o.label} brand photography`}
-              loading="lazy"
-              className="h-full w-full rounded-[2px] object-cover shadow-[0_40px_70px_rgba(28,24,21,0.22)]"
-            />
-            <figcaption className="mt-2 label-xs text-ink/45">{o.label}</figcaption>
-          </figure>
         ))}
       </div>
     </section>
