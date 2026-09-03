@@ -93,7 +93,7 @@ function ProjectForm() {
 export function ProcessAndFooter() {
   return (
     <>
-      <section id="studio" className="bg-cream px-6 py-28 md:px-12 md:py-44">
+      <section id="studio" className="site-section studio-section bg-cream px-6 md:px-12">
         <div className="mx-auto max-w-[1600px]">
           <Reveal>
             <SectionLabel>How we work</SectionLabel>
@@ -126,7 +126,7 @@ export function ProcessAndFooter() {
       </section>
       <section
         id="contact"
-        className="final-cta relative overflow-hidden bg-cream px-6 py-28 md:px-12 md:py-40"
+        className="site-section final-cta relative overflow-hidden bg-cream px-6 md:px-12"
       >
         <div
           aria-hidden
@@ -172,16 +172,12 @@ export function ProcessAndFooter() {
           />
           <div className="footer-contact text-left md:text-right">
             <nav aria-label="Social links" className="footer-socials">
-              <a
-                href="https://www.instagram.com/brandlift_studios/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://www.instagram.com/bisaat.labs/" target="_blank" rel="noreferrer">
                 Instagram ↗
               </a>
-              <a href="https://www.facebook.com/brandlift_studios" target="_blank" rel="noreferrer">
-                Facebook ↗
-              </a>
+              <span aria-disabled="true" title="LinkedIn profile coming soon">
+                LinkedIn
+              </span>
               <a href="mailto:bisaatlabs@gmail.com">Email ↗</a>
             </nav>
             <p className="text-sm text-white/65">Karachi, Pakistan · Available worldwide</p>

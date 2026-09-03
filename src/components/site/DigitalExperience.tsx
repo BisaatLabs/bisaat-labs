@@ -23,7 +23,7 @@ export function DigitalExperience() {
             </p>
           </Reveal>
         </div>
-        <div className="device-scene mt-20" data-cursor="VIEW">
+        <div className="device-scene mt-20">
           <div className="laptop">
             <div className="screen">
               <img
