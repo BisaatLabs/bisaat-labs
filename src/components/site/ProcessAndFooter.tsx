@@ -1,4 +1,5 @@
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { Diamond, Reveal, SectionLabel } from "./ui";
 
 const process = [
@@ -9,22 +10,52 @@ const process = [
 ];
 
 function ProjectForm() {
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const [submitState, setSubmitState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const value = (key: string) => String(data.get(key) || "Not provided");
-    const subject = `Project enquiry — ${value("brand")}`;
-    const body = [
-      `Name: ${value("name")}`,
-      `Email: ${value("email")}`,
-      `Brand: ${value("brand")}`,
-      `Project type: ${value("project")}`,
-      `Budget: ${value("budget")}`,
-      "",
-      "Project details:",
-      value("message"),
-    ].join("\n");
-    window.location.href = `mailto:bisaatlabs@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const form = event.currentTarget;
+
+    if (!isSupabaseConfigured || !supabase) {
+      setSubmitState("error");
+      setSubmitMessage(
+        "The enquiry service is not configured yet. Please email bisaatlabs@gmail.com.",
+      );
+      return;
+    }
+
+    const data = new FormData(form);
+    const value = (key: string) => String(data.get(key) || "").trim();
+
+    setSubmitState("sending");
+    setSubmitMessage("");
+
+    try {
+      const { error } = await supabase.functions.invoke("send-enquiry", {
+        body: {
+          name: value("name"),
+          email: value("email"),
+          brand: value("brand"),
+          project: value("project"),
+          budget: value("budget") || "Prefer to discuss",
+          message: value("message"),
+          website: value("website"),
+        },
+      });
+
+      if (error) throw error;
+
+      form.reset();
+      setSubmitState("sent");
+      setSubmitMessage("Thank you — your enquiry has been sent. We’ll be in touch soon.");
+    } catch (error) {
+      console.error("Unable to send project enquiry", error);
+      setSubmitState("error");
+      setSubmitMessage(
+        "We couldn’t send your enquiry right now. Please try again or email bisaatlabs@gmail.com.",
+      );
+    }
   };
 
   return (
@@ -83,9 +114,23 @@ function ProjectForm() {
           placeholder="What are you building, and what would make it successful?"
         />
       </label>
-      <button type="submit">
-        Send project enquiry <span aria-hidden>↗</span>
+      <label className="project-form-trap" aria-hidden="true">
+        Website
+        <input name="website" tabIndex={-1} autoComplete="off" />
+      </label>
+      <button type="submit" disabled={submitState === "sending"}>
+        {submitState === "sending" ? "Sending enquiry…" : "Send project enquiry"}{" "}
+        <span aria-hidden>{submitState === "sending" ? "…" : "↗"}</span>
       </button>
+      {submitMessage ? (
+        <p
+          className={`project-form-status is-${submitState}`}
+          role={submitState === "error" ? "alert" : "status"}
+          aria-live="polite"
+        >
+          {submitMessage}
+        </p>
+      ) : null}
     </form>
   );
 }

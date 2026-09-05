@@ -121,13 +121,11 @@ export function CameraScene() {
           <h2 id="brand-story-title">
             We don't just shoot <em>content.</em>
           </h2>
-          <p>We craft visuals that tell stories, build brands and create lasting impact.</p>
         </div>
         <div className="brand-story-message brand-story-message--final" aria-hidden="true">
           <h2>
             We build brands <em>people remember.</em>
           </h2>
-          <p>Distinct ideas, beautifully made and designed to stay with your audience.</p>
         </div>
       </header>
 

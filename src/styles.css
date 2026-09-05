@@ -93,13 +93,18 @@
   html {
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    max-width: 100%;
     overflow-x: hidden;
+    overflow-x: clip;
   }
 
   ::selection {
@@ -1285,13 +1290,6 @@
   font-style: normal;
   font-weight: 800;
 }
-.brand-story-intro p {
-  max-width: 33rem;
-  margin: 1.1rem auto 0;
-  color: color-mix(in srgb, var(--ink), transparent 48%);
-  font-size: clamp(0.76rem, 1vw, 0.9rem);
-  line-height: 1.65;
-}
 .brand-story-camera {
   position: absolute;
   z-index: 4;
@@ -1524,6 +1522,25 @@
   border: 1px solid rgba(243, 230, 215, 0.13);
   border-radius: clamp(1.15rem, 1.7vw, 1.75rem);
   background: rgba(255, 255, 255, 0.035);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
+  transform: translateZ(0);
+  transition:
+    transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 400ms ease;
+}
+.capability-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -35% -20% 35% 20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.24), transparent 68%);
+  opacity: 0;
+  transform: translate3d(-12%, 12%, 0) scale(0.8);
+  transition:
+    opacity 500ms ease,
+    transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .capability-card::after {
   content: "";
@@ -1536,6 +1553,9 @@
   border: 1px solid currentColor;
   transform: rotate(45deg);
   opacity: 0.06;
+  transition:
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 500ms ease;
 }
 .capability-card--paper {
   background: var(--paper);
@@ -1561,20 +1581,41 @@
   align-items: flex-start;
   justify-content: space-between;
 }
-.capability-card-top span {
+.capability-card-number {
   font-size: 0.62rem;
   font-weight: 750;
   letter-spacing: 0.16em;
   opacity: 0.52;
 }
-.capability-card-top svg {
-  box-sizing: content-box;
-  width: 1.35rem;
-  height: 1.35rem;
-  padding: 0.65rem;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  opacity: 0.68;
+.capability-icon {
+  position: relative;
+  display: grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  place-items: center;
+}
+.capability-icon::after {
+  display: none;
+}
+.capability-icon-face {
+  display: grid;
+  width: 2.6rem;
+  aspect-ratio: 1;
+  place-items: center;
+  background: transparent;
+  transform: rotate(-3deg);
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.capability-icon-face::before {
+  display: none;
+}
+.capability-icon-face svg {
+  width: 1.7rem;
+  height: 1.7rem;
+}
+.capability-card-copy,
+.capability-card small {
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .capability-card h3 {
   max-width: 12ch;
@@ -1584,11 +1625,16 @@
   letter-spacing: -0.045em;
 }
 .capability-card p {
+  display: -webkit-box;
   max-width: 27rem;
   margin-top: 0.9rem;
+  overflow: hidden;
   font-size: clamp(0.8rem, 0.9vw, 0.92rem);
   line-height: 1.65;
   opacity: 0.64;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 .capability-card small {
   padding-top: 1.25rem;
@@ -1599,6 +1645,30 @@
   line-height: 1.5;
   text-transform: uppercase;
   opacity: 0.52;
+}
+@media (hover: hover) and (pointer: fine) {
+  .capability-card:hover {
+    border-color: color-mix(in srgb, currentColor, transparent 72%);
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.2);
+    transform: translateY(-0.55rem);
+  }
+  .capability-card:hover::before {
+    opacity: 1;
+    transform: translate3d(8%, -4%, 0) scale(1.08);
+  }
+  .capability-card:hover::after {
+    opacity: 0.12;
+    transform: translate(-0.8rem, -0.8rem) rotate(45deg);
+  }
+  .capability-card:hover .capability-icon-face {
+    transform: translateY(-0.2rem) rotate(4deg) scale(1.1);
+  }
+  .capability-card:hover .capability-card-copy {
+    transform: translateY(-0.2rem);
+  }
+  .capability-card:hover small {
+    transform: translateX(0.25rem);
+  }
 }
 @media (min-width: 900px) {
   .capabilities-heading {
@@ -2248,9 +2318,35 @@
 .project-form button:hover span {
   transform: rotate(45deg);
 }
+.project-form button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+  transform: none;
+}
 .project-form button:focus-visible {
   outline: 2px solid var(--teal);
   outline-offset: 4px;
+}
+.project-form-trap {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.project-form-status {
+  max-width: 34rem;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+.project-form-status.is-sent {
+  color: var(--teal);
+}
+.project-form-status.is-error {
+  color: #9b3f2f;
 }
 .footer-socials {
   display: flex;

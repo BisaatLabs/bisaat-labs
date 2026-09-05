@@ -1,13 +1,13 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Aperture,
-  CalendarDays,
+  BookOpen,
+  CalendarClock,
+  Camera,
   Clapperboard,
   Megaphone,
-  MonitorSmartphone,
-  Shapes,
+  PanelsTopLeft,
 } from "lucide-react";
-import { SectionLabel } from "./ui";
+import { Reveal, SectionLabel } from "./ui";
 
 type Capability = {
   number: string;
@@ -22,23 +22,26 @@ const capabilities: Capability[] = [
   {
     number: "01",
     title: "Brand guidelines",
-    description: "A clear, usable system that keeps every expression of your brand consistent.",
+    description:
+      "We define how your brand should appear digitally and turn that direction into polished, high-quality posts.",
     deliverables: "Logo usage · Typography · Colour · Voice",
-    icon: Shapes,
+    icon: BookOpen,
     tone: "paper",
   },
   {
     number: "02",
     title: "Product & brand shoots",
-    description: "Art-directed imagery that gives every product a world of its own.",
+    description:
+      "Our team shoots and edits your products into professional Instagram posts and engaging reels.",
     deliverables: "Concept · Styling · Photography",
-    icon: Aperture,
+    icon: Camera,
     tone: "brown",
   },
   {
     number: "03",
     title: "Social & reels",
-    description: "Platform-native stories designed to earn attention and keep it.",
+    description:
+      "We create platform-ready posts and reels designed to capture attention and strengthen your social presence.",
     deliverables: "Content plans · Reels · Editing",
     icon: Clapperboard,
     tone: "soft",
@@ -46,24 +49,26 @@ const capabilities: Capability[] = [
   {
     number: "04",
     title: "Web & digital",
-    description: "Fast, considered websites that turn brand presence into experience.",
+    description:
+      "We design professional, interactive and fully customized websites that help businesses grow digitally.",
     deliverables: "UX · Design · Development",
-    icon: MonitorSmartphone,
+    icon: PanelsTopLeft,
     tone: "paper",
   },
   {
     number: "05",
     title: "Social media management",
     description:
-      "Planned content calendars, polished post and reel editing, and consistent publishing across your channels.",
+      "We plan your content calendar, edit posts and reels, and publish consistently across your social channels.",
     deliverables: "Content calendar · Editing · Posting",
-    icon: CalendarDays,
+    icon: CalendarClock,
     tone: "teal",
   },
   {
     number: "06",
     title: "Creative campaigns",
-    description: "One strong idea, shaped consistently across every audience touchpoint.",
+    description:
+      "We develop memorable campaign ideas and adapt them into cohesive content across every digital touchpoint.",
     deliverables: "Concept · Rollout · Digital content",
     icon: Megaphone,
     tone: "paper",
@@ -93,18 +98,24 @@ export function Reels() {
         </header>
 
         <div className="capabilities-grid">
-          {capabilities.map(({ number, title, description, deliverables, icon: Icon, tone }) => (
-            <article key={number} className={`capability-card capability-card--${tone}`}>
-              <div className="capability-card-top">
-                <span>{number}</span>
-                <Icon aria-hidden="true" strokeWidth={1.5} />
-              </div>
-              <div>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </div>
-              <small>{deliverables}</small>
-            </article>
+          {capabilities.map(({ number, title, description, deliverables, icon: Icon, tone }, index) => (
+            <Reveal key={number} className="h-full" delay={index * 70} y={22}>
+              <article className={`capability-card capability-card--${tone}`}>
+                <div className="capability-card-top">
+                  <span className="capability-card-number">{number}</span>
+                  <span className="capability-icon" aria-hidden="true">
+                    <span className="capability-icon-face">
+                      <Icon strokeWidth={1.65} />
+                    </span>
+                  </span>
+                </div>
+                <div className="capability-card-copy">
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                </div>
+                <small>{deliverables}</small>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

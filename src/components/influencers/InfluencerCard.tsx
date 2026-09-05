@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Eye, Instagram, MapPin, PlayCircle, Star, UsersRound } from "lucide-react";
+import { ChevronDown, Eye, Instagram, MapPin, Star } from "lucide-react";
 import type { Influencer } from "@/lib/supabase";
 import { avatarFor } from "@/data/demo-influencers";
 import { cn } from "@/lib/utils";
@@ -24,9 +24,10 @@ export function InfluencerCard({ influencer }: { influencer: Influencer }) {
   const [expanded, setExpanded] = useState(false);
   const avatar = influencer.avatar_url || avatarFor(influencer.name);
   const averageViews = influencer.average_views || "Not shared";
-  const engagement = influencer.engagement_rate
-    ? `${influencer.engagement_rate.toFixed(1)}%`
-    : `${influencer.rating.toFixed(1)} / 5`;
+  const niches = influencer.content_type
+    .split(",")
+    .map((niche) => niche.trim())
+    .filter(Boolean);
 
   return (
     <article className="group overflow-hidden rounded-[28px] border border-ink/[0.08] bg-paper shadow-[0_18px_55px_rgba(28,24,21,0.07)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(28,24,21,0.12)]">
@@ -53,18 +54,13 @@ export function InfluencerCard({ influencer }: { influencer: Influencer }) {
               </p>
             )}
 
-            <div className="mt-5 grid grid-cols-1 gap-3 text-left min-[430px]:grid-cols-3 sm:grid-cols-1">
+            <div className="mt-5 grid grid-cols-2 gap-3 text-left sm:grid-cols-1">
               <Stat
-                icon={<UsersRound className="size-4" />}
-                label="Reach"
-                value={influencer.reach || "—"}
+                icon={<Star className="size-4" />}
+                label="Rating"
+                value="5 / 5"
               />
-              <Stat icon={<Eye className="size-4" />} label="Avg. views" value={averageViews} />
-              <Stat
-                icon={<PlayCircle className="size-4" />}
-                label="Engagement"
-                value={engagement}
-              />
+              <Stat icon={<Eye className="size-4" />} label="Reach" value={averageViews} />
             </div>
           </div>
         </div>
@@ -118,19 +114,21 @@ export function InfluencerCard({ influencer }: { influencer: Influencer }) {
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-ink/35">
-                  Platforms
+                  Niche
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                  {(influencer.platforms.length ? influencer.platforms : ["Not specified"]).map(
-                    (item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-teal/25 bg-teal/10 px-3 py-1 text-xs text-teal"
-                      >
-                        {item}
-                      </span>
-                    ),
-                  )}
+                  {(niches.length ? niches : ["Not specified"]).map((niche, index) => (
+                    <span
+                      key={`${niche}-${index}`}
+                      className={cn(
+                        "rounded-full border border-teal/25 bg-teal/10 px-3 py-1 text-xs text-teal transition-[opacity,transform] duration-300 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none",
+                        expanded ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
+                      )}
+                      style={{ transitionDelay: expanded ? `${80 + index * 70}ms` : "0ms" }}
+                    >
+                      {niche}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
